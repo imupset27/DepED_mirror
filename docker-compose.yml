@@ -17,6 +17,5 @@ services:
     volumes:
       - shiny-data:/srv/shiny-server/data
     restart: always 
-
 volumes:
   shiny-data:

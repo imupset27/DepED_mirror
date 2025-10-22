@@ -21,7 +21,7 @@ COPY --chown=shiny:shiny _auth0.yml /srv/shiny-server/_auth0.yml
 # Optional: log to stdout for easier debugging
 ENV APPLICATION_LOGS_TO_STDOUT=true
 
-EXPOSE 3838
+EXPOSE 3839
 
 # Drop privileges
 USER shiny
