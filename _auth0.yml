@@ -1,0 +1,10 @@
+name: deped sf app
+remote_url: ''
+auth0_config:
+  api_url: 'https://emlstat.us.auth0.com'
+  credentials:
+    key:    'zQwiazG0Tirc7dbY3sIkEodEAq28c59O'
+    secret: '_z6fIy8hOCD0HUCZbOlvqduZzUuV0PQS7tI-geKQHLG85nUBOpENNEHKqOztq-Fw'
+redirect_uri: http://localhost:8080
+logout_url: http://localhost:8080
+

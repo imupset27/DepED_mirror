@@ -1,0 +1,19 @@
+# Dockerfile
+FROM rocker/shiny:latest
+
+# Install the packages you need; auth0 requires httr, shinyjs, yaml (it pulls deps)
+RUN install2.r --error --skipinstalled \
+    auth0 \
+    shiny \
+    tidyverse \
+    readxl \
+    openxlsx
+
+# Copy your app into Shiny Server's root
+COPY . /srv/shiny-server/
+
+
+# Optional: log to stdout (easier in Portainer)
+ENV APPLICATION_LOGS_TO_STDOUT=true
+
+EXPOSE 3838
