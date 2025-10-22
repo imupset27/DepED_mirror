@@ -1,28 +1,15 @@
 FROM rocker/shiny:latest
 
-USER root
-WORKDIR /srv/shiny-server
+# Install any additional R packages your app needs
+RUN R -e "install.packages(c('shiny', 'ggplot2'))"
 
-# Install required R packages
-RUN install2.r --error --skipinstalled \
-    auth0 shiny shinyjs tidyverse readxl openxlsx yaml httr bs4Dash \
-    shinyWidgets fontawesome DT purrr dplyr tidyr lubridate writexl \
-    digest tibble qrcode zip grid htmltools
+# Copy your Shiny app
+COPY ./app /srv/shiny-server/
 
-# Create writable directory for persistent data
-RUN mkdir -p /srv/shiny-server/data \
-    && chown shiny:shiny /srv/shiny-server/data \
-    && chmod 755 /srv/shiny-server/data
+# Copy custom config to change port
+COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 
-# Copy your Shiny app into the container
-COPY --chown=shiny:shiny . /srv/shiny-server/
-COPY --chown=shiny:shiny _auth0.yml /srv/shiny-server/_auth0.yml
-
-# Optional: log to stdout for easier debugging
-ENV APPLICATION_LOGS_TO_STDOUT=true
-
+# Expose the new internal port
 EXPOSE 3839
 
-# Drop privileges
-USER shiny
-
+CMD ["/usr/bin/shiny-server"]
