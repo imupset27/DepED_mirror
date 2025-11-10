@@ -20,6 +20,11 @@ library("htmltools")
 library("openxlsx")
 
 
+# ---- Options ----
+# options(shiny.host = "0.0.0.0", shiny.port = 8080)
+# options(shiny.maxRequestSize = 30*1024^2) # ~30MB uploads
+# options(shiny.fullstacktrace = TRUE)
+
 # ---- Storage paths ----
 .data_dir            <- .data_dir <- Sys.getenv("APP_DATA_DIR", "/srv/shiny-server/data") #"data"
 .users_rds_path      <- file.path(.data_dir, "users.rds")

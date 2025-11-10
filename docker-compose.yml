@@ -5,10 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # Optional: host networking for RUN steps during build
-      network: host
-    network_mode: "host"  # runtime: container shares host network
-    # Do NOT specify `ports:` when using host network
+    ports:
+      - "80:3838"
     env_file:
       - stack.env
     environment:
@@ -17,5 +15,7 @@ services:
     volumes:
       - shiny-data:/srv/shiny-server/data
     restart: always 
+
 volumes:
   shiny-data:
+    driver: local
