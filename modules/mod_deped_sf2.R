@@ -3,6 +3,7 @@
 # Self-contained fluidPage app + merged-cell-aware SF2 template writer
 # Writes ONLY: Date row, DOW row, No.+Name, attendance marks; preserves merges & formulas.
 # --------------------------------------------------------------------
+
 library("shiny")
 library("DT")
 library("dplyr")
@@ -19,14 +20,13 @@ library("grid")
 library("htmltools")
 library("openxlsx")
 
-
 # ---- Options ----
 # options(shiny.host = "0.0.0.0", shiny.port = 8080)
 # options(shiny.maxRequestSize = 30*1024^2) # ~30MB uploads
 # options(shiny.fullstacktrace = TRUE)
 
 # ---- Storage paths ----
-.data_dir            <- .data_dir <- Sys.getenv("APP_DATA_DIR", "/srv/shiny-server/data") #"data"
+.data_dir            <- "data"
 .users_rds_path      <- file.path(.data_dir, "users.rds")
 .attendance_rds_path <- file.path(.data_dir, "attendance.rds")
 .qr_dir              <- file.path(.data_dir, "qrcodes")
@@ -266,10 +266,10 @@ mod_deped_sf2_ui <- function(id) {
                    div(class = "panel-body",
                        radioButtons(ns("role"), "Role", choices = c("Student"="student","Teacher"="teacher"),
                                     inline = TRUE, selected = "teacher"),
-                       textInput(ns("user_id"), "User ID (LRN)", placeholder = "STD1001 / TCH001"),
-                       passwordInput(ns("password"), "Password (LRN for students)"),
+                       textInput(ns("user_id"), "User ID (LRN)", placeholder = "T001"),
+                       passwordInput(ns("password"), "Password (LRN for students)", placeholder = "SF2"),
                        actionButton(ns("login_btn"), "Login", class = "btn btn-primary"),
-                       tags$p(class="note", "Tip: For QR check-in, students can scan the QR without logging in.")
+                       tags$p(class="note", "")
                    )
                )
       ),
@@ -369,8 +369,8 @@ mod_deped_sf2_ui <- function(id) {
                            textInput(ns("qr_base_url"), "Base URL (default http://localhost:8080/)", value = load_base_url()),
                            checkboxInput(ns("qr_secure"), "Secure mode (daily signed tokens)", value = FALSE),
                            passwordInput(ns("qr_secret"), "Secret key (used to sign tokens)",  value = load_secret()),
-                           actionButton(ns("qr_save_settings"), "Save Settings", class = "btn btn-primary"),
-                           tags$p(class="note", HTML("<b>Important:</b> On phones, <code>localhost</code> points to the phone itself. Use your server's LAN IP (e.g., <code>http://192.168.x.x:8080/</code>) when scanning from Android."))
+                           actionButton(ns("qr_save_settings"), "Save Settings", class = "btn btn-primary")
+                           #tags$p(class="note", HTML("<b>Important:</b> On phones, <code>localhost</code> points to the phone itself. Use your server's LAN IP (e.g., <code>http://192.168.x.x:8080/</code>) when scanning from Android."))
                        )
                    ),
                    div(class = "panel",
@@ -404,7 +404,7 @@ mod_deped_sf2_ui <- function(id) {
 # ============================================================
 #                   MODULE SERVER (fluidPage)
 # ============================================================
-mod_deped_sf2_server <- function(id) {
+mod_deped_sf2_server <- function(id,query = reactive(NULL)) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -699,6 +699,53 @@ mod_deped_sf2_server <- function(id) {
         incProgress(1); showNotification(sprintf("Imported %d students. Generated %d QR PNGs.", nrow(imp), length(files)), type="message")
       })
     })
+    
+    
+    
+    observe({
+      req(input$sf2_tabs)
+      query <- parseQueryString(session$clientData$url_search)
+      if (!is.null(query$lrn) && nzchar(query$lrn)) {
+        updateTabsetPanel(session, "sf2_tabs", selected = "login")  # Show login tab
+        
+        # Auto attendance logic
+        lrn <- query$lrn
+        today <- Sys.Date()
+        u <- users_live()
+        stu <- u %>% dplyr::filter(user_id == lrn, role == "student")
+        
+        if (nrow(stu) == 1) {
+          last <- att_live() %>%
+            dplyr::filter(user_id == lrn, date == today) %>%
+            dplyr::arrange(created_at) %>%
+            dplyr::slice_tail(n = 1)
+          
+          if (nrow(last) == 0 || last$status[1] != "P") {
+            new_row <- tibble::tibble(
+              record_id = paste0("R", as.integer(Sys.time()), sample(1000:9999, 1)),
+              user_id = stu$user_id,
+              full_name = stu$full_name,
+              section = stu$section,
+              date = today,
+              time = format(Sys.time(), "%H:%M:%S"),
+              source = "qr",
+              status = "P",
+              note = "QR auto-check-in",
+              created_at = Sys.time()
+            )
+            att <- dplyr::bind_rows(att_live(), new_row)
+            save_attendance(att)
+            showNotification(sprintf("Present recorded for %s", stu$full_name[1]), type = "message")
+          } else {
+            showNotification(sprintf("Already present: %s", stu$full_name[1]), type = "message")
+          }
+        } else {
+          showNotification("Unknown LRN.", type = "error")
+        }
+      }
+    })
+    
+    
     output$qr_preview <- renderUI({
       req(rv$qr_files); n <- min(length(rv$qr_files), 8)
       tags$div(lapply(seq_len(n), function(i) {

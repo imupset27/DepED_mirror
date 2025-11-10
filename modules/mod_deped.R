@@ -140,11 +140,18 @@ mod_deped_server <- function(id) {
     })
     
     
+     observe({
+      query <- parseQueryString(session$clientData$url_search)
+      if (!is.null(query$lrn) && nzchar(query$lrn)) {
+        rv("sf2")  # This activates the SF2 module
+      }
+    })
+    
     observeEvent(rv(), {
       if (rv() == "grades") mod_deped_sf9_server("grades")
       else if (rv() == "lrn") mod_deped_sf1_server("lrn")
       else if (rv() == "mps") mod_deped_mps_server("mps")
-      else if (rv() == "sf2") mod_deped_sf2_server("sf2")
+      else if (rv() == "sf2") mod_deped_sf2_server("sf2", reactive(parseQueryString(session$clientData$url_search)))
     }, ignoreInit = TRUE)
     
   })
