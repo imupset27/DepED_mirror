@@ -1,17 +1,15 @@
 # --- Options you may keep in app.R (recommended) ---
-# options(shiny.host = "192.168.254.105", shiny.port = 8080)
+#options(shiny.host = "192.168.137.1", shiny.port = 8080)
 options(shiny.maxRequestSize = 30*1024^2)     # ~30MB uploads
 options(shiny.fullstacktrace = TRUE)          # helpful while debugging
 
 # app.R
-library(auth0)
 library(shiny)
 library(bs4Dash)
 library(shinyWidgets)
 library(fontawesome)
 library(shinyjs)
-
-options(auth0_config_file = Sys.getenv("AUTH0_CONFIG", "/srv/shiny-server/_auth0.yml"))
+library(bslib)
 
 # ---- MODULES ----
 source("modules/mod_deped.R")
@@ -23,6 +21,15 @@ source("modules/mod_deped_mps.R")
 # -------------------- UI --------------------
 ui <- bs4DashPage(
   title = "EMLStat",
+  
+  freshTheme = bs_theme(
+    version = 4,          # Bootstrap 4 for AdminLTE 3
+    primary = "#0d6efd",  # your brand blue
+    warning = "#ffc107",
+    danger  = "#dc3545",
+    success = "#28a745"
+  ),
+  
   
   header = dashboardHeader(
     title = tags$div(
@@ -270,8 +277,26 @@ server <- function(input, output, session) {
   observeEvent(input$open_research, updateTabItems(session, "main_tabs", "research"))
   observeEvent(input$open_consult, updateTabItems(session, "main_tabs", "consult"))
   
+  query <- reactive(parseQueryString(session$clientData$url_search))
+  
   mod_deped_server("deped")
+  
+  rv <- reactiveVal(NULL)
+  
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    if (!is.null(query$lrn) && nzchar(query$lrn)) {
+      updateTabItems(session, "main_tabs", "deped")
+      rv("sf2")  # Now this works
+    }
+  })
+  
+  observeEvent(rv(), {
+    if (rv() == "sf2") mod_deped_sf2_server("sf2", reactive(parseQueryString(session$clientData$url_search)))
+  })
+  
+  
+  
 }
 
 shinyApp(ui, server)
-#auth0::shinyAppAuth0(ui, server)
