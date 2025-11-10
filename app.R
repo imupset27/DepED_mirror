@@ -273,5 +273,5 @@ server <- function(input, output, session) {
   mod_deped_server("deped")
 }
 
-#shinyApp(ui, server)
-auth0::shinyAppAuth0(ui, server)
+shinyApp(ui, server)
+#auth0::shinyAppAuth0(ui, server)
