@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   shiny:
-    image: mydockerid82/depedsf_app
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "80:3838"
     environment:
@@ -10,14 +12,7 @@ services:
       APP_DATA_DIR: "/srv/shiny-server/data"
     volumes:
       - shiny-data:/srv/shiny-server/data
-    deploy:
-      mode: replicated
-      replicas: 4
-      restart_policy:
-        condition: any
-      update_config:
-        parallelism: 1
-        delay: 10s
+    restart: always 
 
 volumes:
   shiny-data:
