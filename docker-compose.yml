@@ -2,9 +2,7 @@ version: "3.8"
 
 services:
   shiny:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: rocker/shiny:latest
     ports:
       - "80:3838"
     environment:
