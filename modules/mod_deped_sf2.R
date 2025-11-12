@@ -77,7 +77,7 @@ save_users      <- function(df) save_atomic(df, .users_rds_path)
 save_attendance <- function(df) save_atomic(df, .attendance_rds_path)
 
 # Settings
-load_base_url <- function() if (file.exists(.base_url_path)) readLines(.base_url_path, warn = FALSE)[1] else "http://localhost:8080/"
+load_base_url <- function() if (file.exists(.base_url_path)) readLines(.base_url_path, warn = FALSE)[1] else "http://192.168.137.1:8080/"
 save_base_url <- function(x) writeLines(x, .base_url_path)
 load_secret   <- function() readLines(.secret_path, warn = FALSE)[1]
 save_secret   <- function(x) writeLines(x, .secret_path)
@@ -366,7 +366,7 @@ mod_deped_sf2_ui <- function(id) {
                    div(class = "panel",
                        div(class = "panel-header", "QR Settings"),
                        div(class = "panel-body",
-                           textInput(ns("qr_base_url"), "Base URL (default http://localhost:8080/)", value = load_base_url()),
+                           textInput(ns("qr_base_url"), "Base URL (default http://192.168.137.1:8080/)", value = load_base_url()),
                            checkboxInput(ns("qr_secure"), "Secure mode (daily signed tokens)", value = FALSE),
                            passwordInput(ns("qr_secret"), "Secret key (used to sign tokens)",  value = load_secret()),
                            actionButton(ns("qr_save_settings"), "Save Settings", class = "btn btn-primary")
@@ -770,7 +770,7 @@ mod_deped_sf2_server <- function(id,query = reactive(NULL)) {
         if (is.null(sec_real) || !nzchar(sec_real)) stop("No section selected for PDF.")
         students <- users_live() %>% dplyr::filter(role == "student", section == sec_real)
         if (nrow(students) == 0) stop("No students in section: ", sec_real)
-        base_url <- input$qr_base_url %or% rv$base_url; if (!nzchar(base_url)) base_url <- "http://localhost:8080/"
+        base_url <- input$qr_base_url %or% rv$base_url; if (!nzchar(base_url)) base_url <- "http://192.168.137.1:8080/"
         orientation <- input$qr_orientation %or% "portrait"
         page_w_cm <- if (orientation == "portrait") 21.0 else 29.7
         page_h_cm <- if (orientation == "portrait") 29.7 else 21.0
