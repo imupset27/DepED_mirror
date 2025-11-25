@@ -820,7 +820,7 @@ mod_deped_sf2_server <- function(id, query = reactive(NULL)) {
       
       tagList(
         dateInput(ns("report_month"), "Month", value = this_month, format = "yyyy-mm", startview = "year"),
-        selectInput(ns("report_section"), "Section (optional)", choices = secs, selected = "All")
+        selectInput(ns("report_section"), "Section (optional)", choices = secs, selected = secs[secs!="All"])
       )
     })
     
