@@ -44,9 +44,9 @@ mod_deped_ui <- function(id) {
     div(
       id = ns("intro_section"),
       class = "intro-section",
-      tags$h2(class = "text-primary mb-3", "DepEd Reports & Analytics Suite"),
+      tags$h2(class = "text-primary mb-3", "DepEd Automation Hub"),
       tags$p(class = "lead", 
-             "Welcome to the EMLStat DepEd Analytics Suite — a collection of applications designed to simplify data management, automate grade consolidation, and support data-driven decision-making for schools."),
+             "Welcome to DepEd Automation Hub — a collection of applications designed to simplify data management, automate grade consolidation, and support data-driven decision-making for schools."),
       tags$div(
         class = "howto-box mt-3",
         tags$h5(icon("lightbulb", class = "text-primary"), " How to Use:"),

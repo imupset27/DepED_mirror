@@ -21,7 +21,6 @@ source("modules/mod_deped_mps.R")
 # -------------------- UI --------------------
 ui <- bs4DashPage(
   title = "EMLStat",
-  
   freshTheme = bs_theme(
     version = 4,          # Bootstrap 4 for AdminLTE 3
     primary = "#0d6efd",  # your brand blue
@@ -31,10 +30,12 @@ ui <- bs4DashPage(
   ),
   
   
+  
   header = dashboardHeader(
-    title = tags$div(
-      tags$img(src = "emlstat_logo.png", height = "35px", style = "margin-right:10px;"),
-      "EMLStat Analytics"
+      disable = TRUE,    
+      title = tags$div(
+      tags$img(src = "emlstat_logo.png", height = "80px", style = "margin-right:10px;"),
+      ""
     )
   ),
   
@@ -52,6 +53,15 @@ ui <- bs4DashPage(
   
   body = dashboardBody(
     useShinyjs(),
+    
+    tags$head(
+      tags$script(HTML("
+        $(function() {
+          $('body').addClass('sidebar-collapse');
+        });
+      "))
+    ),
+    
     tags$head(
       tags$style(HTML("
         body, .content-wrapper { background-color: #f8f9fa !important; }
@@ -93,12 +103,12 @@ ui <- bs4DashPage(
         fluidPage(
           tags$div(
             class = "hero-section",
-            tags$h1("Empowering Decisions Through Data"),
-            tags$h4("Your trusted partner in statistical consulting, analytics, and research solutions.")
+            tags$h1("Simplifying School Data for Smarter Decisions"),
+            tags$h4("Your all-in-one solution for DepEd reports, analytics, and grade management.")
           ),
           
           br(),
-          tags$h2(class = "text-center mb-4 text-primary", "Our Services"),
+          #tags$h2(class = "text-center mb-4 text-primary", "Our Services"),
           
           fluidRow(
             column(6,
@@ -107,7 +117,7 @@ ui <- bs4DashPage(
                      style = "padding: 20px;",
                      onclick = "Shiny.setInputValue('open_deped', true, {priority: 'event'})",
                      bs4Card(
-                       title = tagList(icon("school", class = "service-icon"), " DepEd Reports & Analytics"),
+                       title = tagList(icon("school", class = "service-icon"), " DepEd Automation Hub"),
                        status = "primary", width = 12,
                        "We build and automate data-driven reports aligned with the Department of Education’s standards to support evidence-based decision making in schools.",
                        br(), tags$div("Explore Service", class = "btn btn-primary mt-2")
@@ -162,8 +172,7 @@ ui <- bs4DashPage(
           tags$h2(class = "text-center text-primary mt-5 mb-3", "Who We Are"),
           tags$p(
             class = "lead text-center mx-auto", style = "max-width:800px;",
-            "EMLStat Analytics & Consulting is a statistical solutions company that helps organizations transform raw data into actionable insights.
-             We specialize in education analytics, research dashboards, and statistical consulting to empower data-driven decision making."
+            "EMLStat is dedicated to empowering schools and educators with smart, data-driven solutions. We specialize in DepEd-compliant reporting tools, grade consolidation systems, and education analytics dashboards that simplify data management and improve decision-making. Our mission is to help teachers and administrators turn raw school data into actionable insights—making compliance easier and learning outcomes better."
           ),
           
           tags$div(
@@ -211,59 +220,16 @@ ui <- bs4DashPage(
       tabItem(tabName = "stat", fluidPage(tags$h3("Statistical Tools (Under Construction)"))),
       tabItem(tabName = "research", fluidPage(tags$h3("Research Dashboard (Under Construction)"))),
       tabItem(
-        tabName = "consult",
-        fluidPage(
-          tags$h2("Consulting & Training"),
-          tags$p("Partner with EMLStat Analytics & Consulting to unlock the full potential of your data."),
-          
-          tags$h3("What We Offer"),
-          tags$ul(
-            tags$li("Customized analytics consulting for institutions and businesses"),
-            tags$li("Hands-on training workshops on data visualization and predictive modeling"),
-            tags$li("Strategic guidance for data-driven decision-making")
-          ),
-          
-          tags$h3("Why Work With Us"),
-          tags$p("We combine technical expertise with a human-centered approach, ensuring your team gains practical skills and actionable insights."),
-          
-          tags$h3("Get in Touch"),
-          tags$p("For project collaborations, workshops, or tailored solutions, email us at "),
-          tags$a(href = "mailto:info@emlstat.uk", "info@emlstat.uk")
+        tabName = "consult",fluidPage(
+          tags$h3("Consulting & Training (Under Construction)")
         )
       )
       ,
       tabItem(
         tabName = "about",
-        fluidPage(
-          tags$h2("About EMLStat"),
-          tags$p("EMLStat Analytics & Consulting helps institutions make better decisions using data."),
-          tags$hr(),
-          
-          # Tagline
-          tags$h3("Tagline"),
-          tags$p("Turning Data Into Decisions That Matter."),
-          
-          # Humanized description
-          tags$h3("Who We Are"),
-          tags$p("At EMLStat Analytics & Consulting, we believe data should work for people—not the other way around. We turn complex information into clear, actionable insights that help teams move with confidence."),
-          
-          # Mission
-          tags$h3("Mission"),
-          tags$p("Our mission is to help organizations unlock the true potential of their data by delivering insights and strategic guidance that drive growth, efficiency, and innovation—always with a human touch."),
-          
-          # Vision
-          tags$h3("Vision"),
-          tags$p("Our vision is a world where data empowers every decision, making institutions smarter, more agile, and more connected to the people they serve."),
-          
-          # Optional: Core services (feel free to edit or remove)
-          tags$h3("Core Services"),
-          tags$ul(
-            tags$li("Business intelligence dashboards & data visualization"),
-            tags$li("Predictive modeling & performance analytics"),
-            tags$li("Data strategy, governance, and quality"),
-            tags$li("Process optimization & decision support")
-          )
-        )
+        fluidPage(tags$h3("About (Under Construction)")),
+        tags$p("For project collaborations, workshops, or tailored solutions, email us at"),
+        tags$a(href = "mailto:info@emlstat.uk", "info@emlstat.uk")
       )
       
     )

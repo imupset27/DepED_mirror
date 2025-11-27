@@ -29,12 +29,12 @@ mod_deped_sf1_ui <- function(id) {
                 div(
                   id = ns("intro_box"),
                   style = "background-color:#f8f9fa; padding:20px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.05);",
-                  tags$h4("4d8 SF1 Extractor"),
+                  tags$h4("📘 SF1 Extractor"),
                   tags$p(class = "lead", "Upload your School Form 1 (SF1) from the DepEd LIS and the app will extract the header details and clean the learners list automatically."),
                   tags$h5("What you need"),
                   tags$ul(
                     tags$li("The original SF1 Excel file (.xlsx or .xls) downloaded from the LIS"),
-                    tags$li("Keep the top rows intact; the app reads header cells like F3 (School ID), F4 (School Name), T4 (School Year), AE4 (Grade Level), T3 (Division), AM3 (District), AM4 (Section), K3 (Region)"),
+                    tags$li("Keep the top rows intact; the app reads header cells like School ID, School Name,  School Year, Grade Level, Division, District, Section, Region"),
                     tags$li("Learners table should contain columns for LRN, Name, Gender, Birthday, Age, and Parents' names")
                   ),
                   tags$p("Once you upload, processing starts and you'll see a progress bar. After completion, the results will appear here."),
